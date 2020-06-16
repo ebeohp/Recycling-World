@@ -23,7 +23,7 @@ class Scene2 extends Phaser.Scene{
         
         this.obstacleGroup = this.physics.add.group();
         let obstacleX = 800;
-        for(let i = 0; i < 10; i++){
+        for(let i = 0; i < 9; i++){
             
             let obstacle = this.obstacleGroup.create(obstacleX, 500, "obstacle");
             obstacle.setOrigin(0.5, 1).setScale(.6);
