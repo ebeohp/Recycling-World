@@ -15,7 +15,7 @@ class Scene2 extends Phaser.Scene{
         this.temp.create(400, 540, "platform").setScale(2).refreshBody();
         this.temp.create(400, 600, "platform").setScale(2).refreshBody();
 
-        this.frog = this.physics.add.sprite(200,100);
+        this.frog = this.physics.add.sprite(200,100, "frog");
         this.frog.body.gravity.y = 500;
 
         this.physics.add.collider(this.frog, this.temp);
