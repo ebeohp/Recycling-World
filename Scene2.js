@@ -4,8 +4,10 @@ class Scene2 extends Phaser.Scene{
     }
     create(){
 
-        this.add.bitmapText(20,20, "pixelFont", "Playing Game",20).setDepth(100);
-      
+        //this.add.bitmapText(20,20, "pixelFont", "Playing Game",20).setDepth(100);
+        this.add.bitmapText(20,20, "pixelFont", "SCORE ", 30).setDepth(100);
+        
+        
         this.background=this.add.tileSprite(0,0,config.width, config.height, "sky");
         this.background.setOrigin(0,0);
        
@@ -22,50 +24,59 @@ class Scene2 extends Phaser.Scene{
         this.cursors = this.input.keyboard.createCursorKeys();
         
         this.obstacleGroup = this.physics.add.group();
+        this.obsVelX = -150;
         let obstacleX = 800;
-        for(let i = 0; i < 9; i++){
-            
+        for(let i = 0; i < 10; i++){
             let obstacle = this.obstacleGroup.create(obstacleX, 500, "obstacle");
             obstacle.setOrigin(0.5, 1).setScale(.6);
             obstacle.setImmovable(true);
-            obstacleX += Phaser.Math.Between(350, 450);
+            obstacleX += Phaser.Math.Between(450, 550);
         }
-        this.obstacleGroup.setVelocityX(-150);
         
         this.numLives = 3; //add colliders that count
         this.lives = this.add.group();
-        //let lifeX = 550;
-        /*for(let i = 0; i < 3; i++){
-            let life = this.lives.create(lifeX, 50, "live");
-            life.play("alive");
-            lifeX+=80;
-        }*/
         this.life1= this.lives.create(550, 50, "live");
         this.life2= this.lives.create(630, 50, "live");
         this.life3= this.lives.create(710, 50, "live");
+
+        this.frogAcc = 5000;
+        this.frogLeft = -200;
+        this.frogRight = 200;
+
+        this.time.addEvent({
+            delay: 6000, //2minutes 120000
+            callback: this.finish,
+            callbackScope: this,
+            loop: false
+        });
+
+        this.bgspeed = 0.5;
     }
+    
     update(){
+        this.obstacleGroup.setVelocityX(this.obsVelX);
+
         if(this.frog.body.touching.down)
         {
             this.frog.play("land"); 
             
             var timedEvent = this.time.addEvent({  
                 delay: 100, 
-                callback: this.onEvent, 
+                callback: this.jump, 
                 callbackScope: this, 
                 loop: false
             });
         }else{
             this.frog.play("fly"); //figure out why cape anim not working
             if(this.cursors.down.isDown){
-                this.frog.setAcceleration(0,5000);
+                this.frog.setAcceleration(0,this.frogAcc);
             }else{
                 this.frog.setAcceleration(0,0);
             }
             if(this.cursors.left.isDown){
-                this.frog.setVelocityX(-200);   
+                this.frog.setVelocityX(this.frogLeft);   
             }else if(this.cursors.right.isDown){
-                this.frog.setVelocityX(200);
+                this.frog.setVelocityX(this.frogRight);
             }else{
                 this.frog.setVelocityX(0);
             }
@@ -78,7 +89,7 @@ class Scene2 extends Phaser.Scene{
             }
         }, this)
         
-        this.background.tilePositionX+= 0.5;
+        this.background.tilePositionX+= this.bgspeed;
 
         this.physics.add.collider(this.frog, this.obstacleGroup, this.hurtPlayer, null, this);
         
@@ -94,6 +105,7 @@ class Scene2 extends Phaser.Scene{
             this.life3.play("alive");
         } //add another else for when the lives hit 0 == game over
     }
+
     hurtPlayer(){
         if(this.frog.alpha <1){
             return;
@@ -102,7 +114,7 @@ class Scene2 extends Phaser.Scene{
 
         this.time.addEvent({
             delay: 1000,
-            callback: this.resetPos,
+            callback: this.resetFrog,
             callbackScope: this,
             loop: false
         });
@@ -110,7 +122,7 @@ class Scene2 extends Phaser.Scene{
         console.log(this.numLives);
         
     }
-    resetPos(){
+    resetFrog(){
         var x= 200;
         var y= -100;
         this.frog.enableBody(true, x,y,true,true);
@@ -129,7 +141,7 @@ class Scene2 extends Phaser.Scene{
         });
     }
    
-    onEvent(){
+    jump(){
         this.frog.setAcceleration(0,-100);
         this.frog.setVelocityY(-600);
     }
@@ -140,6 +152,12 @@ class Scene2 extends Phaser.Scene{
         });
         return rightmostObstacle;
     }
+    finish()
+    {
+        this.obstacleGroup.clear(true, true);
+        this.add.bitmapText(100,100, "pixelFont", "YOU'VE FINISHED!", 50).setDepth(100);
+        this.bgspeed = 0;
+    }    
 
 
 }
