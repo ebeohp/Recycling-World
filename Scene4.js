@@ -6,9 +6,13 @@ class Scene4 extends Phaser.Scene{
 
     }
     create(){
+      
 
     }
+    
     update(){
 
     }
+   
+    
 }

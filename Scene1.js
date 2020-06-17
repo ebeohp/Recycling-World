@@ -6,8 +6,12 @@ class Scene1 extends Phaser.Scene{
         this.load.bitmapFont("pixelFont", "assets/font/font.png", "assets/font/font.xml");
         this.load.image("sky", "assets/images/sky.png");
         this.load.image("platform", "assets/images/platform.png");
-        this.load.image("ground", "assets/images/ground.png");
+        
         this.load.image("obstacle", "assets/images/daisy.png");
+        this.load.spritesheet("bin" , "assets/sprites/finale.png", {
+            frameWidth: 160,
+            frameHeight: 160
+        });
         this.load.spritesheet("frog" , "assets/sprites/frog.png", {
             frameWidth: 192,
             frameHeight: 192
@@ -15,6 +19,10 @@ class Scene1 extends Phaser.Scene{
         this.load.spritesheet("live" , "assets/sprites/live.png", {
             frameWidth: 128,
             frameHeight: 128
+        });
+        this.load.spritesheet("items" , "assets/sprites/recycle_items.png", {
+            frameWidth: 300,
+            frameHeight: 192
         });
     }
     create(){
@@ -25,11 +33,11 @@ class Scene1 extends Phaser.Scene{
             frameRate: 6,
             repeat: -1//loop animation
         });
-    
         this.anims.create({
             key: "land",
             frames: [ { key: "frog", frame: 2 } ],
             frameRate: 0
+            
         });
 
         this.anims.create({
@@ -43,6 +51,22 @@ class Scene1 extends Phaser.Scene{
             frameRate: 0
         });
 
+        this.anims.create({
+            key: "normal_anim",
+            frames: [ { key: "bin", frame: 0 } ],
+            frameRate: 0
+        });
+        this.anims.create({
+            key: "filled_anim",
+            frames: this.anims.generateFrameNumbers("bin"),
+            frameRate: 8
+        });
+
+        this.anims.create({
+            key: "ran_item",
+            frames:[{key: "item", frame: 1}],
+            frameRate: 0,
+        });
         this.scene.start("playGame");
     }
     update(){

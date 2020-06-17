@@ -7,7 +7,6 @@ class Scene2 extends Phaser.Scene{
         //this.add.bitmapText(20,20, "pixelFont", "Playing Game",20).setDepth(100);
         this.add.bitmapText(20,20, "pixelFont", "SCORE ", 30).setDepth(100);
         
-        
         this.background=this.add.tileSprite(0,0,config.width, config.height, "sky");
         this.background.setOrigin(0,0);
        
@@ -18,8 +17,9 @@ class Scene2 extends Phaser.Scene{
 
         this.frog = this.physics.add.sprite(200,100);
         this.frog.body.gravity.y = 500;
-        //this.frog.setImmovable(true);
+
         this.physics.add.collider(this.frog, this.temp);
+
         this.frog.setCollideWorldBounds(true).setScale(.5);
         this.cursors = this.input.keyboard.createCursorKeys();
         
@@ -44,15 +44,39 @@ class Scene2 extends Phaser.Scene{
         this.frogRight = 200;
 
         this.time.addEvent({
-            delay: 6000, //2minutes 120000
+            delay: 120000, //2minutes 120000
             callback: this.finish,
             callbackScope: this,
             loop: false
         });
 
         this.bgspeed = 0.5;
+
+        this.time.addEvent({  
+            delay: 10000, 
+            callback: this.newItems, 
+            callbackScope: this, 
+            loop: true
+        });
+        
     }
-    
+    newItems(){
+        var items = this.physics.add.group({
+            key: "item", //items are not loading on screen for me
+            repeat: 5,
+            setXY: { x: 400, y: 0, stepX: 70 }
+        });
+        this.physics.add.collider(items, this.temp);
+        this.physics.add.collider(items, this.obstacleGroup);
+        
+        items.children.iterate(function (child) {
+            child.body.gravity.y = 500;
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            if(child.x<0){
+                child.destroy();
+            }
+        });
+    }
     update(){
         this.obstacleGroup.setVelocityX(this.obsVelX);
 
@@ -60,7 +84,7 @@ class Scene2 extends Phaser.Scene{
         {
             this.frog.play("land"); 
             
-            var timedEvent = this.time.addEvent({  
+            this.time.addEvent({  
                 delay: 100, 
                 callback: this.jump, 
                 callbackScope: this, 
@@ -81,8 +105,6 @@ class Scene2 extends Phaser.Scene{
                 this.frog.setVelocityX(0);
             }
         }
-
-
         this.obstacleGroup.getChildren().forEach(function(obstacle){
             if(obstacle.getBounds().right < 0){
                 obstacle.x = this.getRightmostObstacle() + Phaser.Math.Between(200, 350);
@@ -152,12 +174,34 @@ class Scene2 extends Phaser.Scene{
         });
         return rightmostObstacle;
     }
-    finish()
-    {
-        this.obstacleGroup.clear(true, true);
-        this.add.bitmapText(100,100, "pixelFont", "YOU'VE FINISHED!", 50).setDepth(100);
+    finish(){
+        this.obstacleGroup.clear(true,true);
+        this.add.bitmapText(100,100, "pixelFont", "YOU'VE FINISHED!", 50);
         this.bgspeed = 0;
-    }    
+
+        this.bin = this.physics.add.sprite(500, 435,"bin");
+        this.bin.setScale(2);
+        this.bin.play("normal_anim");
+        
+
+        this.physics.add.overlap(this.frog, this.bin, this.fin, null, this);
+        //this.scene.start("winGame");
+    }
+    fin(){
+        this.frog.disableBody(true,true);
+        this.bin.play("filled_anim");
+        this.time.addEvent({
+            delay: 1500,
+            callback: this.win,
+            callbackScope: this,
+            loop: false
+        });
+     
+    }
+    win(){
+        this.scene.start("winGame");
+    }
+    
 
 
 }
