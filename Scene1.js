@@ -14,7 +14,7 @@ class Scene1 extends Phaser.Scene{
         });
         this.load.spritesheet("frog" , "assets/sprites/frog.png", {
             frameWidth: 192,
-            frameHeight: 192
+            frameHeight: 150
         });
         this.load.spritesheet("live" , "assets/sprites/live.png", {
             frameWidth: 128,
@@ -23,6 +23,10 @@ class Scene1 extends Phaser.Scene{
         this.load.spritesheet("item" , "assets/sprites/recycle_items.png", {
             frameWidth: 100,
             frameHeight: 64
+        });
+        this.load.spritesheet("bar" , "assets/sprites/progress.png", {
+            frameWidth: 200,
+            frameHeight: 16
         });
     }
     create(){
@@ -37,7 +41,6 @@ class Scene1 extends Phaser.Scene{
             key: "land",
             frames: [ { key: "frog", frame: 2 } ],
             frameRate: 0
-            
         });
 
         this.anims.create({
@@ -62,11 +65,7 @@ class Scene1 extends Phaser.Scene{
             frameRate: 8
         });
 
-        /*this.anims.create({
-            key: "ran_item",
-            frames:[{key: "item", frame: Math.floor(Math.random() * 15)}],
-            frameRate: 0,
-        });*/
+        
         this.scene.start("playGame");
     }
     update(){

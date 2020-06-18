@@ -3,45 +3,43 @@ class Scene2 extends Phaser.Scene{
         super("playGame");
     }
     create(){
+        this.scoreLabel = this.add.bitmapText(20,20, "pixelFont", "SCORE ", 30).setDepth(100);
+        this.score = 0;
 
-        //this.add.bitmapText(20,20, "pixelFont", "Playing Game",20).setDepth(100);
-        this.add.bitmapText(20,20, "pixelFont", "SCORE ", 30).setDepth(100);
-        
         this.background=this.add.tileSprite(0,0,config.width, config.height, "sky");
         this.background.setOrigin(0,0);
+        this.bgspeed = 0.5;
        
         this.temp = this.physics.add.staticGroup();
         this.temp.create(400, 480, "platform").setScale(2).refreshBody();
         this.temp.create(400, 540, "platform").setScale(2).refreshBody();
         this.temp.create(400, 600, "platform").setScale(2).refreshBody();
 
-        this.frog = this.physics.add.sprite(200,100, "frog");
-        this.frog.body.gravity.y = 500;
-
-        this.physics.add.collider(this.frog, this.temp);
-
-        this.frog.setCollideWorldBounds(true).setScale(.5);
-        this.cursors = this.input.keyboard.createCursorKeys();
-        
-        this.obstacleGroup = this.physics.add.group();
-        this.obsVelX = -150;
-        let obstacleX = 800;
-        for(let i = 0; i < 10; i++){
-            let obstacle = this.obstacleGroup.create(obstacleX, 500, "obstacle");
-            obstacle.setOrigin(0.5, 1).setScale(.6);
-            obstacle.setImmovable(true);
-            obstacleX += Phaser.Math.Between(450, 550);
-        }
-        
         this.numLives = 3; //add colliders that count
         this.lives = this.add.group();
         this.life1= this.lives.create(550, 50, "live");
         this.life2= this.lives.create(630, 50, "live");
         this.life3= this.lives.create(710, 50, "live");
 
+        this.frog = this.physics.add.sprite(200,100, "frog");
+        this.frog.body.gravity.y = 500;
+        this.physics.add.collider(this.frog, this.temp);
+        this.frog.setCollideWorldBounds(true).setScale(.5);
         this.frogAcc = 5000;
         this.frogLeft = -200;
         this.frogRight = 200;
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+        
+        this.obstacleGroup = this.physics.add.group();
+        this.obsVelX = -150;
+        let obstacleX = 700;
+        for(let i = 0; i < 10; i++){
+            let obstacle = this.obstacleGroup.create(obstacleX, 450, "obstacle");
+            obstacle.setOrigin(0.5, 1).setScale(.6);
+            obstacle.setImmovable(true).setScale(.3);
+            obstacleX += Phaser.Math.Between(450, 550);
+        }
 
         this.time.addEvent({
             delay: 120000, //2minutes 120000
@@ -49,6 +47,15 @@ class Scene2 extends Phaser.Scene{
             callbackScope: this,
             loop: false
         });
+        this.progbar = this.add.sprite(300,30,"bar");
+        this.progbar.setScale(1.5);
+        this.time.addEvent({
+            delay: 2500, //for progress bar.
+            callback: this.progression,
+            callbackScope: this,
+            loop: true
+        });
+        this.frame = 0;
 
         this.bgspeed = 0.5;
 
@@ -58,34 +65,65 @@ class Scene2 extends Phaser.Scene{
             callbackScope: this, 
             loop: true
         });
+    }
+    progression(){
+        this.anims.create({
+            key: "prog_anim",
+            frames: [ { key: "bar", frame: this.frame} ],
+            frameRate: 0,
+        });
+        this.progbar.play("prog_anim");
+        console.log(this.frame);
+        this.frame+=1;
         
     }
     newItems(){
-        var items = this.physics.add.group({
+        this.items = this.physics.add.group({
             key: "item", //items are not loading on screen for me
             frame: [0,1,2,3,4,5,6,7,8,9,10,11,12,13],
-            repeat:0 , 
+            repeat: 12, 
             randomFrame: true,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.Between(50, 90)}
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.Between(50, 150)}
         });
-        this.physics.add.collider(items, this.temp);
-        this.physics.add.collider(items, this.obstacleGroup);
-        
-        items.children.iterate(function (child) {
+        this.physics.add.collider(this.items, this.temp);
+        this.physics.add.collider(this.items, this.obstacleGroup);
+  
+       if(this.items.x<0){
+            this.items.destroy();
+        }
+        this.items.children.iterate(function (child) {
             child.body.gravity.y = Phaser.Math.FloatBetween(300, 600);
             child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            if(child.x<0){
-                child.destroy();
-            }
+            
         });
+        this.physics.add.overlap(this.frog, this.items, this.collectItem, null, this);
+    }
+   
+    collectItem(player, item){
+        item.disableBody(true, true);
+        
+        //  Add and update the score
+        this.score += 1;
+        this.scoreLabel.text = "SCORE " + this.score;
+        
+        if (this.items.countActive(true) == 0){
+            //  A new batch of stars to collect
+        this.items.children.iterate(function (child) {
+
+            child.enableBody(true, child.x, 0, true, true);
+
+           });
+        }
     }
     update(){ //i want to add a progress bar.
-        this.obstacleGroup.setVelocityX(this.obsVelX);
+        this.obstacleGroup.setVelocityX(this.obsVelX); //needed
+        this.background.tilePositionX+= this.bgspeed;
+        
+      
 
         if(this.frog.body.touching.down)
         {
             this.frog.play("land"); 
-            
             this.time.addEvent({  
                 delay: 100, 
                 callback: this.jump, 
@@ -113,8 +151,6 @@ class Scene2 extends Phaser.Scene{
             }
         }, this)
         
-        this.background.tilePositionX+= this.bgspeed;
-
         this.physics.add.collider(this.frog, this.obstacleGroup, this.hurtPlayer, null, this);
         
         if(this.numLives==2){
@@ -156,7 +192,7 @@ class Scene2 extends Phaser.Scene{
             targets: this.frog,
             y: 200,
             ease: "Power1",
-            duration: 3000,
+            duration: 2000,
             repeat: 0,
             onComplete: function(){
                 this.frog.alpha = 1;
@@ -178,6 +214,7 @@ class Scene2 extends Phaser.Scene{
     }
     finish(){
         this.obstacleGroup.clear(true,true);
+        this.items.clear(true,true);
         this.add.bitmapText(100,100, "pixelFont", "YOU'VE FINISHED!", 50);
         this.bgspeed = 0;
 
