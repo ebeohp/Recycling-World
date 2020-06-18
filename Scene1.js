@@ -20,7 +20,7 @@ class Scene1 extends Phaser.Scene{
             frameWidth: 128,
             frameHeight: 128
         });
-        this.load.spritesheet("items" , "assets/sprites/recycle_items.png", {
+        this.load.spritesheet("item" , "assets/sprites/recycle_items.png", {
             frameWidth: 300,
             frameHeight: 192
         });
@@ -64,7 +64,7 @@ class Scene1 extends Phaser.Scene{
 
         this.anims.create({
             key: "ran_item",
-            frames:[{key: "item", frame: 1}],
+            frames:[{key: "item", frame: Math.floor(Math.random() * 15)}],
             frameRate: 0,
         });
         this.scene.start("playGame");

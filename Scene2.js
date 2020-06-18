@@ -63,15 +63,17 @@ class Scene2 extends Phaser.Scene{
     newItems(){
         var items = this.physics.add.group({
             key: "item", //items are not loading on screen for me
+            frame: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
             repeat: 5,
-            setXY: { x: 400, y: 0, stepX: 70 }
+            randomFrame: true,
+            setXY: { x: 300, y: 0, stepX: 70}
         });
         this.physics.add.collider(items, this.temp);
         this.physics.add.collider(items, this.obstacleGroup);
         
         items.children.iterate(function (child) {
             child.body.gravity.y = 500;
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)).setScale(.5);
             if(child.x<0){
                 child.destroy();
             }
