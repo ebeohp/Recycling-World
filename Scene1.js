@@ -21,8 +21,8 @@ class Scene1 extends Phaser.Scene{
             frameHeight: 128
         });
         this.load.spritesheet("item" , "assets/sprites/recycle_items.png", {
-            frameWidth: 300,
-            frameHeight: 192
+            frameWidth: 100,
+            frameHeight: 64
         });
     }
     create(){
@@ -62,11 +62,11 @@ class Scene1 extends Phaser.Scene{
             frameRate: 8
         });
 
-        this.anims.create({
+        /*this.anims.create({
             key: "ran_item",
             frames:[{key: "item", frame: Math.floor(Math.random() * 15)}],
             frameRate: 0,
-        });
+        });*/
         this.scene.start("playGame");
     }
     update(){
