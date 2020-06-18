@@ -34,7 +34,7 @@ class Scene1 extends Phaser.Scene{
         this.anims.create({
             key: "fly",
             frames: this.anims.generateFrameNumbers("frog", { start: 0, end: 1 }),
-            frameRate: 6,
+            frameRate: 20,
             repeat: -1//loop animation
         });
         this.anims.create({

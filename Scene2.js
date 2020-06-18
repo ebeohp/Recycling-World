@@ -42,20 +42,22 @@ class Scene2 extends Phaser.Scene{
         }
 
         this.time.addEvent({
-            delay: 120000, //2minutes 120000
+            delay: 60000, //2minutes 120000
             callback: this.finish,
             callbackScope: this,
             loop: false
         });
         this.progbar = this.add.sprite(300,30,"bar");
         this.progbar.setScale(1.5);
-        this.time.addEvent({
-            delay: 2500, //for progress bar.
-            callback: this.progression,
-            callbackScope: this,
-            loop: true
-        });
-        this.frame = 0;
+       
+        //this.frame = 0;
+        this.anims.create({
+            key: "prog_anim",
+            frames: this.anims.generateFrameNumbers("bar"),
+            frameRate: .8
+        }); 
+        this.progbar.play("prog_anim");
+        
 
         this.bgspeed = 0.5;
 
@@ -66,17 +68,12 @@ class Scene2 extends Phaser.Scene{
             loop: true
         });
     }
-    progression(){
-        this.anims.create({
-            key: "prog_anim",
-            frames: [ { key: "bar", frame: this.frame} ],
-            frameRate: 0,
-        });
-        this.progbar.play("prog_anim");
+   /* progression(){
+        
         console.log(this.frame);
         this.frame+=1;
         
-    }
+    }*/
     newItems(){
         this.items = this.physics.add.group({
             key: "item", //items are not loading on screen for me
@@ -119,7 +116,7 @@ class Scene2 extends Phaser.Scene{
         this.obstacleGroup.setVelocityX(this.obsVelX); //needed
         this.background.tilePositionX+= this.bgspeed;
         
-      
+        
 
         if(this.frog.body.touching.down)
         {
