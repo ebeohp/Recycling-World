@@ -3,6 +3,20 @@ class Scene2 extends Phaser.Scene{
         super("playGame");
     }
     create(){
+
+        this.music = this.sound.add("music");
+        this.collect = this.sound.add("collect");
+        var musicConfig = { 
+            mute: false,
+            volume: 1,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 1
+        }
+        this.music.play(musicConfig);
+
         this.scoreLabel = this.add.bitmapText(20,20, "pixelFont", "SCORE ", 30).setDepth(100);
         this.score = 0;
 
@@ -42,15 +56,14 @@ class Scene2 extends Phaser.Scene{
         }
 
         this.time.addEvent({
-            delay: 60000, //2minutes 120000
+            delay: 60000, //1 min 60000 adjust prog and this to 1:30 min
             callback: this.finish,
             callbackScope: this,
             loop: false
         });
         this.progbar = this.add.sprite(300,30,"bar");
         this.progbar.setScale(1.5);
-       
-        //this.frame = 0;
+   
         this.anims.create({
             key: "prog_anim",
             frames: this.anims.generateFrameNumbers("bar"),
@@ -72,7 +85,7 @@ class Scene2 extends Phaser.Scene{
         
         console.log(this.frame);
         this.frame+=1;
-        
+         
     }*/
     newItems(){
         this.items = this.physics.add.group({
@@ -97,6 +110,7 @@ class Scene2 extends Phaser.Scene{
     }
    
     collectItem(player, item){
+        this.collect.play();
         item.disableBody(true, true);
         
         //  Add and update the score
@@ -211,7 +225,7 @@ class Scene2 extends Phaser.Scene{
     }
     finish(){
         this.obstacleGroup.clear(true,true);
-        this.items.clear(true,true);
+        //this.items.clear(true,true);
         this.add.bitmapText(100,100, "pixelFont", "YOU'VE FINISHED!", 50);
         this.bgspeed = 0;
 
@@ -235,7 +249,7 @@ class Scene2 extends Phaser.Scene{
      
     }
     win(){
-        this.scene.start("winGame");
+        this.scene.start("winGame", {Score: this.score, Lives: this.numLives});
     }
     
 

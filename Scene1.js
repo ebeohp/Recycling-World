@@ -28,6 +28,11 @@ class Scene1 extends Phaser.Scene{
             frameWidth: 200,
             frameHeight: 16
         });
+    
+        this.load.audio("music", "assets/sound/50s-bit.mp3");
+        this.load.audio("collect", "assets/sound/collect.mp3");
+        this.load.audio("success", "assets/sound/success.mp3");
+    
     }
     create(){
         
