@@ -3,20 +3,11 @@ class Scene2 extends Phaser.Scene{
         super("playGame");
     }
     create(){
-
-        this.music = this.sound.add("music");
+        this.playing = true;
         this.collect = this.sound.add("collect");
-        var musicConfig = { 
-            mute: false,
-            volume: 1,
-            rate: 1,
-            detune: 0,
-            seek: 0,
-            loop: true,
-            delay: 1
-        }
-        this.music.play(musicConfig);
-
+        this.music = this.sound.add("music");
+        this.loss = this.sound.add("oof");
+        this.music.play();
         this.scoreLabel = this.add.bitmapText(20,20, "pixelFont", "SCORE ", 30).setDepth(100);
         this.score = 0;
 
@@ -70,7 +61,6 @@ class Scene2 extends Phaser.Scene{
             frameRate: .8
         }); 
         this.progbar.play("prog_anim");
-        
 
         this.bgspeed = 0.5;
 
@@ -81,32 +71,28 @@ class Scene2 extends Phaser.Scene{
             loop: true
         });
     }
-   /* progression(){
-        
-        console.log(this.frame);
-        this.frame+=1;
-         
-    }*/
     newItems(){
-        this.items = this.physics.add.group({
-            key: "item", //items are not loading on screen for me
-            frame: [0,1,2,3,4,5,6,7,8,9,10,11,12,13],
-            repeat: 12, 
-            randomFrame: true,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.Between(50, 150)}
-        });
-        this.physics.add.collider(this.items, this.temp);
-        this.physics.add.collider(this.items, this.obstacleGroup);
+        if(this.playing){
+            this.items = this.physics.add.group({
+                key: "item", //items are not loading on screen for me
+                frame: [0,1,2,3,4,5,6,7,8,9,10,11,12,13],
+                repeat: 12, 
+                randomFrame: true,
+                setXY: { x: 250, y: 0, stepX: Phaser.Math.Between(50, 150)}
+            });
+            this.physics.add.collider(this.items, this.temp);
+            this.physics.add.collider(this.items, this.obstacleGroup);
   
-       if(this.items.x<0){
-            this.items.destroy();
-        }
-        this.items.children.iterate(function (child) {
-            child.body.gravity.y = Phaser.Math.FloatBetween(300, 600);
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            if(this.items.x<0){
+                this.items.destroy();
+            }
+            this.items.children.iterate(function (child) {
+                child.body.gravity.y = Phaser.Math.FloatBetween(300, 600);
+                child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
             
-        });
-        this.physics.add.overlap(this.frog, this.items, this.collectItem, null, this);
+            });
+            this.physics.add.overlap(this.frog, this.items, this.collectItem, null, this);
+        }
     }
    
     collectItem(player, item){
@@ -125,6 +111,8 @@ class Scene2 extends Phaser.Scene{
 
            });
         }
+
+       
     }
     update(){ //i want to add a progress bar.
         this.obstacleGroup.setVelocityX(this.obsVelX); //needed
@@ -164,20 +152,28 @@ class Scene2 extends Phaser.Scene{
         
         this.physics.add.collider(this.frog, this.obstacleGroup, this.hurtPlayer, null, this);
         
-        if(this.numLives==2){
+        if(this.numLives==2 ){
+       
             this.life1.play("dead");
         }else if(this.numLives==1){
+          
             this.life2.play("dead");
         }else if (this.numLives==0){
+           
             this.life3.play("dead");
-        }else{
+        }else if(this.numLives==3){
             this.life1.play("alive");
             this.life2.play("alive");
             this.life3.play("alive");
-        } //add another else for when the lives hit 0 == game over
+        }else{
+            this.music.stop();
+            this.over();
+        }
+        //add another else for when the lives hit 0 == game over
     }
-
+    
     hurtPlayer(){
+        this.loss.play();
         if(this.frog.alpha <1){
             return;
         }
@@ -224,18 +220,18 @@ class Scene2 extends Phaser.Scene{
         return rightmostObstacle;
     }
     finish(){
+        this.playing = false;
         this.obstacleGroup.clear(true,true);
-        //this.items.clear(true,true);
+     
         this.add.bitmapText(100,100, "pixelFont", "YOU'VE FINISHED!", 50);
         this.bgspeed = 0;
 
         this.bin = this.physics.add.sprite(500, 435,"bin");
         this.bin.setScale(2);
         this.bin.play("normal_anim");
-        
 
         this.physics.add.overlap(this.frog, this.bin, this.fin, null, this);
-        //this.scene.start("winGame");
+    
     }
     fin(){
         this.frog.disableBody(true,true);
@@ -249,7 +245,11 @@ class Scene2 extends Phaser.Scene{
      
     }
     win(){
+        this.music.stop();
         this.scene.start("winGame", {Score: this.score, Lives: this.numLives});
+    }
+    over(){
+        this.scene.start("endGame");
     }
     
 

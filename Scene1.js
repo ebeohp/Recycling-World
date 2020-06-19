@@ -6,8 +6,8 @@ class Scene1 extends Phaser.Scene{
         this.load.bitmapFont("pixelFont", "assets/font/font.png", "assets/font/font.xml");
         this.load.image("sky", "assets/images/sky.png");
         this.load.image("platform", "assets/images/platform.png");
-        
         this.load.image("obstacle", "assets/images/daisy.png");
+        this.load.image("title", "assets/images/title.png");
         this.load.spritesheet("bin" , "assets/sprites/finale.png", {
             frameWidth: 160,
             frameHeight: 160
@@ -31,11 +31,11 @@ class Scene1 extends Phaser.Scene{
     
         this.load.audio("music", "assets/sound/50s-bit.mp3");
         this.load.audio("collect", "assets/sound/collect.mp3");
-        this.load.audio("success", "assets/sound/success.mp3");
+       // this.load.audio("success", "assets/sound/success.mp3");
+        this.load.audio("oof", "assets/sound/loselife.mp3");
     
     }
     create(){
-        
         this.anims.create({
             key: "fly",
             frames: this.anims.generateFrameNumbers("frog", { start: 0, end: 1 }),
@@ -47,7 +47,6 @@ class Scene1 extends Phaser.Scene{
             frames: [ { key: "frog", frame: 2 } ],
             frameRate: 0
         });
-
         this.anims.create({
             key: "alive",
             frames: [ { key: "live", frame: 0} ],
@@ -69,12 +68,35 @@ class Scene1 extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers("bin"),
             frameRate: 8
         });
-
+        this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.bg = this.add.image(0,0,"sky");
+        this.bg.setOrigin(0,0).setScale(1.5);
         
-        this.scene.start("playGame");
+        this.items = this.physics.add.group({
+            key: "item", //items are not loading on screen for me
+            frame: [0,1,2,3,4,5,6,7,8,9,10,11,12,13],
+            repeat: 5, 
+            randomFrame: true,
+            setXY: { x: 0, y: 0, stepX: 10}
+        });
+        this.items.children.iterate(function (child) {
+            child.body.gravity.y = Phaser.Math.FloatBetween(10, 200);
+            child.setCollideWorldBounds(true);
+        });
+
+        this.title = this.add.image(400,300,"title");
+        this.title.setScale(3);
+        this.add.bitmapText(300,295, "pixelFont", "Hit SPACE to play!", 30);
     }
     update(){
-
+        if(Phaser.Input.Keyboard.JustDown(this.spacebar)){
+            this.startGame();
+        }
+        
+        
+    }
+    startGame(){
+        this.scene.start("playGame");
     }
 
 
