@@ -8,6 +8,7 @@
     <script type = "text/javascript"src="Scene2.js?v=<? echo time() ?>"></script>
     <script type = "text/javascript"src="Scene3.js?v=<? echo time() ?>"></script>
     <script type = "text/javascript"src="Scene4.js?v=<? echo time() ?>"></script>
+    <script type = "text/javascript"src="Loading.js?v=<? echo time() ?>"></script>
     <script type = "text/javascript"src="game.js?v=<? echo time() ?>"></script>
 </head>
 </html>
