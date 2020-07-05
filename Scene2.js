@@ -74,13 +74,9 @@ class Scene2 extends Phaser.Scene{
     newItems(){
         if(this.playing){
             this.items = this.physics.add.group({
-<<<<<<< HEAD
+
                 key: "item", 
                 frame: [0,1,2,3,4,5,6,7,8,9,10],
-=======
-                key: "item", //items are not loading on screen for me
-                frame: [0,1,2,3,4,5,6,7,8,9,10,11,12,13],
->>>>>>> 914936eb089d17ab9b0a84cd7a64c002bb68f0ce
                 repeat: 12, 
                 randomFrame: true,
                 setXY: { x: 250, y: 0, stepX: Phaser.Math.Between(50, 150)}
