@@ -100,8 +100,6 @@ class Scene1 extends Phaser.Scene{
         this.scene.start("playGame");
     }
 
-
-=======
 class Scene1 extends Phaser.Scene{
     constructor(){
         super("bootGame");
