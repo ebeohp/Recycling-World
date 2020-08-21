@@ -1,4 +1,4 @@
-
+/*
 class Scene2 extends Phaser.Scene{
     constructor(){
         super("playGame");
@@ -254,7 +254,7 @@ class Scene2 extends Phaser.Scene{
         this.scene.start("endGame");
     }
     
-
+*/
 
 class Scene2 extends Phaser.Scene{
     constructor(){
