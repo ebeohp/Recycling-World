@@ -511,7 +511,4 @@ class Scene2 extends Phaser.Scene{
         this.scene.start("endGame");
     }
     
-
-
->>>>>>> 24f93aa1f10a60e10f802a98ec7f44ee6e2b9e13
 }
