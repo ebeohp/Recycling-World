@@ -1,5 +1,5 @@
 
-class Scene1 extends Phaser.Scene{
+/*class Scene1 extends Phaser.Scene{
     constructor(){
         super("bootGame");
     }
@@ -98,7 +98,7 @@ class Scene1 extends Phaser.Scene{
     }
     startGame(){
         this.scene.start("playGame");
-    }
+    }*/
 
 class Scene1 extends Phaser.Scene{
     constructor(){
