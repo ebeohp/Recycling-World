@@ -74,6 +74,7 @@ class Scene2 extends Phaser.Scene{
     newItems(){
         if(this.playing){
             this.items = this.physics.add.group({
+
                 key: "item", 
                 frame: [0,1,2,3,4,5,6,7,8,9,10],
                 repeat: 12, 

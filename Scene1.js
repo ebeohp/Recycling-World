@@ -75,7 +75,7 @@ class Scene1 extends Phaser.Scene{
         this.items = this.physics.add.group({
             key: "item", //items are not loading on screen for me
             frame: [0,1,2,3,4,5,6,7,8,9,10],
-            repeat: 6, 
+            repeat: 6,
             randomFrame: true,
             setXY: { x: 0, y: 0, stepX: 10}
         });
